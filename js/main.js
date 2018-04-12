@@ -39,16 +39,36 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
     $scope.logged = false;
     $scope.sPic = [
         {
-            'title': 'test'
+            'title': 'test',
+            'src': 'upload/test.png',
+            'date': '1992.02.12',
+            'author': 'mrkamis',
+            'likes': 0,
+            'unlikes': 2
         },
         {
-            'title': 'test'
+            'title': 'test',
+            'src': 'upload/test.png',
+            'date': '1992.02.12',
+            'author': 'mrkamis',
+            'likes': 0,
+            'unlikes': 2
         },
         {
-            'title': 'test'
+            'title': 'test',
+            'src': 'upload/test.png',
+            'date': '1992.02.12',
+            'author': 'mrkamis',
+            'likes': 0,
+            'unlikes': 2
         },
         {
-            'title': 'test'
+            'title': 'test',
+            'src': 'upload/test.png',
+            'date': '1992.02.12',
+            'author': 'mrkamis',
+            'likes': 0,
+            'unlikes': 2
         }
     ]
     $scope.aPic = [];
@@ -61,6 +81,9 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
 }])
 .directive('myPhoto', () => {
     return{
-        template: '<span ng-bind="item.title"></span>'
+        template: '<h3><span ng-bind="item.title"></span></h3>' +
+        '<span class="w3-bar"><i class="w3-left"><img src="icons/002-avatar.png"></i><i ng-bind="item.author" class="w3-left"></i><i class="w3-right"><img src="icons/001-calendar.png"></i><i class="w3-right" ng-bind="item.date"></i></span>' +
+        '<img src="{{item.src}}" alt="{{item.title}}" class="w3-button" ng-click="openPhoto(item.src)" style="width: 100%;">' +
+        '<span class="w3-bar"><i class="w3-left"><img src="icons/005-thumb-up.png" class="w3-button" ng-click="like(item.src)"><span ng-bind="item.likes"></span></i><i class="w3-right"><img src="icons/004-thumb-down.png" class="w3-button" ng-click="unlike(item.src)"><span ng-bind="item.unlikes"></span></i></span>' 
     }
 })
