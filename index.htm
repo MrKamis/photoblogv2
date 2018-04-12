@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>PhotoBlog by mrkamis</title>
+    <script src="src/jquery/dist/jquery.min.js"></script>
+    <script src="src/angular/angular.min.js"></script>
+    <link href="src/w3css-v3/w3.css" rel="stylesheet">
+    <link href="src/w3css-themes/w3-theme-blue-grey.css" rel="stylesheet">
+    <script src="src/ng-file-upload/ng-file-upload-all.min.js"></script>
+    <script src="js/main.js"></script>
+</head>
+<body ng-app="photoBlog" class="w3-theme-l4">
+    <header ng-controller="navBar" class="w3-bar w3-row w3-theme-l1 w3-opacity w3-large w3-margin-bottom">
+        <button class="w3-button {{kolekcja.active}}" ng-click="go('kolekcja')"><i><img src="icons/006-home.png"></i> Kolekcja</button>
+        <button class="w3-button {{panel.active}}" ng-click="go('panel')"><i><img src="icons/007-cogwheel-outline.png"></i> Panel</button>
+    </header>
+    <div class="w3-row w3-container" ng-controller="content">
+        <span ng-switch="currentPage">
+            <span ng-switch-when='kolekcja'>
+                <span class="w3-row w3-container">
+                    <my-photo ng-repeat="item in sPic" class="w3-card w3-padding w3-col l4 s12 m6"></my-photo>
+                </span>
+            </span>
+            <span ng-switch-when="panel">
+                WW
+            </span>
+        </span>
+    </div>
+</body>
+</html>
