@@ -37,47 +37,36 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
 .controller('content', ['$scope', '$http', 'Upload', ($scope, $http, Upload) => {
     $scope.currentPage = 'kolekcja';
     $scope.logged = false;
-    $scope.sPic = [
-        {
-            'title': 'test',
-            'src': 'upload/test.png',
-            'date': '1992.02.12',
-            'author': 'mrkamis',
-            'likes': 0,
-            'unlikes': 2
-        },
-        {
-            'title': 'test',
-            'src': 'upload/test.png',
-            'date': '1992.02.12',
-            'author': 'mrkamis',
-            'likes': 0,
-            'unlikes': 2
-        },
-        {
-            'title': 'test',
-            'src': 'upload/test.png',
-            'date': '1992.02.12',
-            'author': 'mrkamis',
-            'likes': 0,
-            'unlikes': 2
-        },
-        {
-            'title': 'test',
-            'src': 'upload/test.png',
-            'date': '1992.02.12',
-            'author': 'mrkamis',
-            'likes': 0,
-            'unlikes': 2
-        }
-    ]
+    $scope.sPic = [];
     $scope.aPic = [];
     $scope.$on('changePage', (elem, arrgs) => {
         $scope.currentPage = arrgs;
     });
     $scope.start = () => {
-
+        $http({
+            method: 'GET',
+            url: 'php/getAll.php',
+        })
+        .then((response) => {
+            if(typeof(response) == 'object'){
+                console.log(response)
+                $scope.aPic = response.data.tab;
+                $scope.sPic = new Array();
+                for(let x = 0; x < $scope.aPic.length; x++){
+                    $scope.sPic.push($scope.aPic[x].tab[0]);
+                    if(x > 10){
+                        break;
+                        $scope.nextPage = true;
+                    }
+                }
+            }else{
+                throw 'Wystapil nieprzewidziany error!';
+            }
+        })
     };
+    angular.element(() => {
+        $scope.start();
+    })
 }])
 .directive('myPhoto', () => {
     return{
