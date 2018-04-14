@@ -18,6 +18,11 @@
         <button class="w3-button {{panel.active}}" ng-click="go('panel')"><i><img src="icons/007-cogwheel-outline.png"></i> Panel</button>
     </header>
     <div class="w3-row w3-container" ng-controller="content">
+    <div class="w3-modal" style="{{loading}}">
+            <div class="w3-modal-content w3-padding-large">
+                <h2>Prosze czekać..</h2>
+            </div>
+        </div>
         <span ng-switch="currentPage">
             <span ng-switch-when='kolekcja'>
                 <span class="w3-row w3-container">
@@ -25,7 +30,29 @@
                 </span>
             </span>
             <span ng-switch-when="panel">
-                WW
+                <div ng-hide="logged" class="w3-row">
+                    <div class="w3-col">
+                        <h3>Logowanie: </h3>
+                        <label for="lLogin">Login: <input type="text" class="w3-input {{loginFormLogin}}" ng-model="user.lLogin"></label>
+                        <label for="lPassword" >Hasło: <input  type="password" class="w3-input {{loginFormPassword}}" ng-model="user.lPassword"></label>
+                        <button class="w3-button" ng-click="login()">Zaloguj</button>
+                    </div>
+
+                    <br>
+
+                    <div class="w3-col">
+                        <h3>Rejestracja: </h3>
+                        <label for="rLogin">Login: <input type="text" class="w3-input {{registerFormLogin}}" ng-model="user.rLogin" minlength="3"></label>
+                        <label for="rPassword">Hasło: <input type="password" class="w3-input {{registerFormRepeatPassword}}" ng-model="user.rPassword"></in></label>
+                        <label for="rRepeatPassword">Powtórz hasło: <input type="password" class="w3-input {{registerFormRepeatPassword}}" ng-model="user.rRepeatPassword"></label>
+                        <button class="w3-button" ng-click="register()">Zarejestruj</button>
+                    </div>
+                </div>
+
+                <div ng-show="logged">
+                    <h3>Panel wstawiania zdjęć: </h3>
+                    <button class="w3-button" ng-click="selectPic()" >Wybierz zdjęcie: </button>
+                </div>
             </span>
         </span>
     </div>
