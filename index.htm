@@ -51,7 +51,15 @@
 
                 <div ng-show="logged">
                     <h3>Panel wstawiania zdjęć: </h3>
-                    <button class="w3-button" ng-click="selectPic()" >Wybierz zdjęcie: </button>
+                    <form name="form">
+                        Tytuł zdjęcia: <input type="text" ng-model="fileTitle.title" class="w3-input">
+
+                        <input ng-model="file" class="w3-button" ngf-select="upload($file, $invalidFiles)"  value="Wybierz zdjęcie:" type="file" ngf-accept="'image/*'" ngf-pattern="'image/*'" ngf-max-size="20MB" ngf-min-height="200">
+                        <img ngf-src="file" style="width: 50px;">
+
+                    </form>
+                    <br>
+                    <button class="w3-button" ng-click="sendFile()">Wyslij</button>
                 </div>
             </span>
         </span>

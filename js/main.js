@@ -34,7 +34,7 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
         }
     }
 }])
-.controller('content', ['$scope', '$http', 'Upload', ($scope, $http, Upload) => {
+.controller('content', ['$scope', '$http', 'Upload', ($scope, $http, $upload) => {
     $scope.currentPage = 'kolekcja';
     $scope.logged = false;
     $scope.sPic = [];
@@ -43,6 +43,11 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
     $scope.registerFormLogin = ''
     $scope.registerFormRepeatPassword = '';
     $scope.loading = '';
+    $scope.fileName;
+    $scope.file;
+    $scope.fileTitle = {
+        title: ''
+    }
     $scope.user = {
         lLogin: '',
         lPassword: '',
@@ -63,15 +68,14 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
             url: 'php/getAll.php',
         })
         .then((response) => {
+            //console.log(response.data)
             if(typeof(response) == 'object'){
                 //console.log(response)
-                $scope.aPic = response.data.tab;
-                $scope.sPic = new Array();
+                $scope.aPic = response.data;
                 for(let x = 0; x < $scope.aPic.length; x++){
-                    $scope.sPic.push($scope.aPic[x].tab[0]);
-                    if(x > 10){
+                    $scope.sPic.push($scope.aPic[x]);
+                    if(x >= 10){
                         break;
-                        $scope.nextPage = true;
                     }
                 }
             }else{
@@ -104,7 +108,7 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
             //console.log(response.data)
             switch(response.data){
                 case 'complete':
-                    $scope.loggedUser.login = 'lLogin';
+                    $scope.loggedUser.login = $scope.user.lLogin;
                     $scope.logged = true;
                     break;
                 case '1':
@@ -155,6 +159,49 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
             })
         }
     }
+    $scope.sendFile = () => {
+        let file = $scope.file;
+        //console.log(file)
+        $upload.upload({
+            url: 'php/sendFile.php',
+            data: {
+                title: $scope.fileTitle.title,
+                file: file,
+                author: $scope.loggedUser.login
+            }
+        })
+        .then((response) => {
+            switch(response.data){
+                case 'complete':
+                    $scope.fileTitle.title = '';
+                    $scope.file = '';
+                    alert('Wysłano plik!');
+                    break;
+                case '1':
+                    throw('Nie wybrano pliku!');
+                    break;
+                case '2':
+                    throw('Nie przesłano pliku!');
+                    break;
+            }
+        })
+    }
+    $scope.upload = (file, errFile) => {
+        $scope.file = file;
+        //console.log(file);
+    }
+    $scope.like = id => {
+        $http({
+            method: 'POST',
+            url: 'php/like.php',
+            data: $.param({
+                id: id
+            })
+        })
+        .then(response => {
+            
+        })
+    }
     angular.element(() => {
         $scope.start();
     })
@@ -164,6 +211,6 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
         template: '<h3><span ng-bind="item.title"></span></h3>' +
         '<span class="w3-bar"><i class="w3-left"><img src="icons/002-avatar.png"></i><i ng-bind="item.author" class="w3-left"></i><i class="w3-right"><img src="icons/001-calendar.png"></i><i class="w3-right" ng-bind="item.date"></i></span>' +
         '<img src="{{item.src}}" alt="{{item.title}}" class="w3-button" ng-click="openPhoto(item.src)" style="width: 100%;">' +
-        '<span class="w3-bar" ng-show="logged"><i class="w3-left"><img src="icons/005-thumb-up.png" class="w3-button" ng-click="like(item.src)"><span ng-bind="item.likes"></span></i><i class="w3-right"><img src="icons/004-thumb-down.png" class="w3-button" ng-click="unlike(item.src)"><span ng-bind="item.unlikes"></span></i></span>' 
+        '<span class="w3-bar" ng-show="logged"><i class="w3-left"><img src="icons/005-thumb-up.png" class="w3-button" ng-click="like(item.id)"><span ng-bind="item.likes"></span></i><i class="w3-right"><img src="icons/004-thumb-down.png" class="w3-button" ng-click="unlike(item.id)"><span ng-bind="item.unlikes"></span></i></span>' 
     }
 })

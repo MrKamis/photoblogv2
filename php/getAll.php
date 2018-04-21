@@ -1,28 +1,27 @@
 <?php
-    class Test{
-        public $tab = [];
-        public function __construct($a){
-            array_push($this->tab, $a);
-        }
-    };
     class Photo{
-        public function __construct($a, $b, $c){
+        public function __construct($a, $b, $c, $d, $e, $f, $g){
             $this->title = $a;
             $this->author = $b;
             $this->src = $c;
-            $this->date = date('d.m.y');
-            $this->likes = 0;
-            $this->unlikes = 0;
+            $this->date = $d;
+            $this->likes = $e;
+            $this->unlikes = $f;
+            $this->id = $g;
         }
     }
-    class Tablica{
-        public $tab = [];
+    require('db.php');
+
+    $db_query = $db_conn->prepare('SELECT * FROM pictures');
+    $db_query->execute();
+    $result = $db_query->fetchAll();
+
+    $tablica = [];
+
+    for($x = 0; $x < count($result); $x++){
+        $tmp = new Photo($result[$x]['title'], $result[$x]['author'], $result[$x]['src'], $result[$x]['date'], $result[$x]['likes'], $result[$x]['unlikes'], $result[$x]['id']);
+        array_push($tablica, $tmp);
     }
-    $tab = new Tablica;
-    for($z = 0; $z < 20; $z++){
-        $y = new Photo('mrkami', 'TESTCIK', 'upload/test.jpg');
-        $x = new Test($y);
-        array_push($tab->tab, $x);
-    }
-    print(json_encode($tab));
+
+    print(json_encode($tablica));
 ?>
