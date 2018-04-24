@@ -34,7 +34,7 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
         }
     }
 }])
-.controller('content', ['$scope', '$http', 'Upload', ($scope, $http, $upload) => {
+.controller('content', ['$scope', '$http', 'Upload', '$location', ($scope, $http, $upload, $location) => {
     $scope.currentPage = 'kolekcja';
     $scope.logged = false;
     $scope.sPic = [];
@@ -59,6 +59,7 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
     $scope.loggedUser = {
         login: ''
     }
+    $scope.pages = [];
     $scope.$on('changePage', (elem, arrgs) => {
         $scope.currentPage = arrgs;
     });
@@ -78,6 +79,15 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
                         break;
                     }
                 }
+
+                let page = 1;
+                $scope.pages.push(1);
+                for(let x = 0; x < $scope.aPic.length; x++){
+                    if(x%10 == 0){
+                        $scope.pages.push(++page)
+                    }
+                }
+                $scope.pages.pop();
             }else{
                 throw 'Wystapil nieprzewidziany error!';
             }
@@ -175,6 +185,8 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
                 case 'complete':
                     $scope.fileTitle.title = '';
                     $scope.file = '';
+                    $scope.start();
+                    $scope.goPage(1);
                     alert('Wysłano plik!');
                     break;
                 case '1':
@@ -202,15 +214,38 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
             
         })
     }
+    $scope.goPage = (which) => {
+        //console.log(which.item)
+        $location.hash('kolekcja_strona' + which.item);
+
+        let item = parseInt(which.item) - 1;
+
+        $scope.sPic = new Array();
+        let tmp = 0;
+
+        for(let x = 0; x < $scope.aPic.length; x++){
+            if(x >= item * 10){
+                $scope.sPic.push($scope.aPic[x]);
+                tmp++;
+             }
+
+            if(tmp == 10){
+                break;
+            }
+        }
+    }
     angular.element(() => {
         $scope.start();
+        $scope.goPage({
+            item: 1
+        });
     })
 }])
 .directive('myPhoto', () => {
     return{
         template: '<h3><span ng-bind="item.title"></span></h3>' +
         '<span class="w3-bar"><i class="w3-left"><img src="icons/002-avatar.png"></i><i ng-bind="item.author" class="w3-left"></i><i class="w3-right"><img src="icons/001-calendar.png"></i><i class="w3-right" ng-bind="item.date"></i></span>' +
-        '<img src="{{item.src}}" alt="{{item.title}}" class="w3-button" ng-click="openPhoto(item.src)" style="width: 100%;">' +
+        '<img src="{{item.src}}" alt="{{item.title}}" class="w3-button" ng-click="openPhoto(item.src)" style="width: 100%; height: 300px;">' +
         '<span class="w3-bar" ng-show="logged"><i class="w3-left"><img src="icons/005-thumb-up.png" class="w3-button" ng-click="like(item.id)"><span ng-bind="item.likes"></span></i><i class="w3-right"><img src="icons/004-thumb-down.png" class="w3-button" ng-click="unlike(item.id)"><span ng-bind="item.unlikes"></span></i></span>' 
     }
 })

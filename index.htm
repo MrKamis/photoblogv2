@@ -28,6 +28,13 @@
                 <span class="w3-row w3-container">
                     <my-photo ng-repeat="item in sPic" class="w3-card w3-padding w3-col l4 s12 m6"></my-photo>
                 </span>
+
+                <hr>
+                <span class="w3-bar">
+                    <div class="w3-left" ng-repeat="item in pages">
+                        <span ng-bind="item" class="w3-button" ng-click="goPage(this)"></span>
+                    </div>
+                </span>
             </span>
             <span ng-switch-when="panel">
                 <div ng-hide="logged" class="w3-row">
