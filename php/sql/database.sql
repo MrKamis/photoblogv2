@@ -5,6 +5,9 @@ USE photoBlogv2;
 CREATE TABLE users(
     login VARCHAR(50),
     password TEXT,
+    permissions TEXT,
+    likes TEXT,
+    unlikes TEXT,
     id INT PRIMARY KEY AUTO_INCREMENT
 );
 
@@ -15,5 +18,7 @@ CREATE TABLE pictures(
     title TEXT,
     src TEXT,
     likes INT,
-    unlikes INT
+    unlikes INT,
+    likesArray TEXT,
+    unlikesArray TEXT
 );
