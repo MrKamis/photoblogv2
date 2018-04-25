@@ -57,7 +57,7 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
         rEmail: ''
     }
     $scope.loggedUser = {
-        login: ''
+        login: false
     }
     $scope.showModalPic = false;
     $scope.pages = [];
@@ -204,15 +204,65 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
         //console.log(file);
     }
     $scope.like = id => {
+        if(!$scope.loggedUser.login) return false;
+        //console.log(id)
         $http({
             method: 'POST',
             url: 'php/like.php',
             data: $.param({
-                id: id
-            })
+                id: id,
+                user: $scope.loggedUser.login
+            }),
+            headers: {
+                'Content-type': 'application/x-www-form-urlencoded'
+            }
         })
         .then(response => {
-            console.log(response.data)
+            //console.log(response.data)
+            switch(response.data){
+                case 'complete':
+                    for(let x = 0; x < $scope.sPic.length; x++){
+                        if($scope.sPic[x].id == id){
+                            $scope.sPic[x].likes++;
+                            break;
+                        }
+                    }
+                    break;
+                case 1:
+                    
+                    break;
+            }
+        })
+    }
+    $scope.unlike = id => {
+        if(!$scope.loggedUser.login) return false;
+        //console.log(id)
+        $http({
+            method: 'POST',
+            url: 'php/dislike.php',
+            data: $.param({
+                id: id,
+                user: $scope.loggedUser.login
+            }),
+            headers: {
+                'Content-type': 'application/x-www-form-urlencoded'
+            }
+        })
+        .then(response => {
+            //console.log(response.data)
+            switch(response.data){
+                case 'complete':
+                    for(let x = 0; x < $scope.sPic.length; x++){
+                        if($scope.sPic[x].id == id){
+                            $scope.sPic[x].unlikes++;
+                            break;
+                        }
+                    }
+                    break;
+                case 1:
+                    
+                    break;
+            }
         })
     }
     $scope.goPage = (which) => {
@@ -251,6 +301,6 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
         template: '<h3><span ng-bind="item.title"></span></h3>' +
         '<span class="w3-bar"><i class="w3-left"><img src="icons/002-avatar.png"></i><i ng-bind="item.author" class="w3-left"></i><i class="w3-right"><img src="icons/001-calendar.png"></i><i class="w3-right" ng-bind="item.date"></i></span>' +
         '<img src="{{item.src}}" alt="{{item.title}}" class="w3-button" ng-click="openPhoto(item.src)" style="width: 100%;">' +
-        '<span class="w3-bar" ng-show="logged"><i class="w3-left"><img src="icons/005-thumb-up.png" class="w3-button" ng-click="like(item.id)"><span ng-bind="item.likes"></span></i><i class="w3-right"><img src="icons/004-thumb-down.png" class="w3-button" ng-click="unlike(item.id)"><span ng-bind="item.unlikes"></span></i></span>' 
+        '<span class="w3-bar"><i class="w3-left"><img src="icons/005-thumb-up.png" class="w3-button" ng-click="like(item.id)"><span ng-bind="item.likes"></span></i><i class="w3-right"><img src="icons/004-thumb-down.png" class="w3-button" ng-click="unlike(item.id)"><span ng-bind="item.unlikes"></span></i></span>' 
     }
 })

@@ -13,7 +13,7 @@
             if(empty($result)){
                 
                 $db_query = null;
-                $db_query = $db_conn->prepare('INSERT INTO users(login, password) VALUES(:login, :password)');
+                $db_query = $db_conn->prepare('INSERT INTO users(login, password, permissions) VALUES(:login, :password, 0)');
                 $db_query->bindParam(':login', $user->rLogin);
                 $db_query->bindParam(':password', $user->rPassword);
                 $db_query->execute();
