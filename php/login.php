@@ -1,4 +1,5 @@
 <?php
+    header('Content-Type: text/plain');
     if(isSet($_POST["content"])){
         $user = json_decode($_POST["content"]);
         $user->lPassword = md5($user->lPassword);

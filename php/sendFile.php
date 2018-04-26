@@ -1,4 +1,5 @@
 <?php
+    header('Content-Type: text/plain');
     if(!empty($_FILES)){
        $file = $_FILES["file"];
 

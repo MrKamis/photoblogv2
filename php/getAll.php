@@ -1,4 +1,5 @@
 <?php
+    header('Content-Type: text/plain');
     class Photo{
         public function __construct($a, $b, $c, $d, $e, $f, $g){
             $this->title = $a;

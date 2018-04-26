@@ -36,9 +36,7 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
 }])
 .controller('content', ['$scope', '$http', 'Upload', '$location', ($scope, $http, $upload, $location) => {
     $scope.currentPage = 'kolekcja';
-    $scope.logged = {
-        logged: false
-    };
+    $scope.logged = false;
     $scope.sPic = [];
     $scope.aPic = [];
     $scope.loginForm = '';
@@ -122,10 +120,10 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
             switch(response.data){
                 case 'complete':
                     $scope.loggedUser.login = $scope.user.lLogin;
-                    $scope.logged.logged = true;
+                    $scope.logged = true;
                     break;
                 case '1':
-                    $scope.logged.logged = false;
+                    $scope.logged = false;
                     $scope.loginFormPassword = 'w3-border-red w3-bottombar';
                     $scope.loginFormLogin = '';
                     break;
@@ -157,7 +155,7 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
                 switch(response.data){
                     case 'complete':
                         $scope.loggedUser.login = $scope.user.rLogin;
-                        $scope.logged.logged = true;
+                        $scope.logged = true;
                         break;
                     case '1':
                         $scope.registerFormRepeatPassword = 'w3-bottombar w3-border-red';
@@ -220,7 +218,7 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
             }
         })
         .then(response => {
-            console.log(response.data)
+            //console.log(response.data)
             switch(response.data){
                 case 'complete':
                     for(let x = 0; x < $scope.sPic.length; x++){
@@ -286,7 +284,6 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
                 break;
             }
         }
-
     }
     $scope.openPhoto = (which) => {
         $scope.showModalPic = true;
