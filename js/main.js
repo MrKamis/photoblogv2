@@ -301,9 +301,15 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
 }])
 .directive('myPhoto', () => {
     return{
-        template: '<h3><span ng-bind="item.title"></span></h3>' +
-        '<span class="w3-bar"><i class="w3-left"><img src="icons/002-avatar.png"></i><i ng-bind="item.author" class="w3-left"></i><i class="w3-right"><img src="icons/001-calendar.png"></i><i class="w3-right" ng-bind="item.date"></i></span>' +
-        '<img src="{{item.src}}" alt="{{item.title}}" class="w3-button" ng-click="openPhoto(item.src)" style="width: 100%;">' +
-        '<span class="w3-bar"><i class="w3-left"><img src="icons/005-thumb-up.png" class="w3-button" ng-click="like(item.id)"><span ng-bind="item.likes"></span></i><i class="w3-right"><img src="icons/004-thumb-down.png" class="w3-button" ng-click="unlike(item.id)"><span ng-bind="item.unlikes"></span></i></span>' 
+        template: 
+        '<div class="w3-row">' +
+            '<div class="w3-col l2 s0 m0" style="opacity: 0;">ble</div>' +
+            '<div class="w3-col l8 s12 m12 w3-card w3-padding">' +
+                '<h3><span ng-bind="item.title"></span></h3>' +
+                '<span class="w3-bar"><i class="w3-left"><img src="icons/002-avatar.png"></i><i ng-bind="item.author" class="w3-left"></i>  <i class="w3-right"><img src="icons/001-calendar.png"></i> <i class="w3-right" ng-bind="item.date"></i></span>' +
+                '<img src="{{item.src}}" alt="{{item.title}}" class="w3-button" ng-click="openPhoto(item.src)" style="width: 100%;">' +
+                '<span class="w3-bar"><i class="w3-left"><img src="icons/005-thumb-up.png" class="w3-button" ng-click="like(item.id)"><span ng-bind="item.likes"></span></i><i class="w3-right"><img src="icons/004-thumb-down.png" class="w3-button" ng-click="unlike(item.id)"><span ng-bind="item.unlikes"></span></i></span>' +
+            '</div>' +
+        '</div>'
     }
 })
