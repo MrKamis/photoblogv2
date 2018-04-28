@@ -33,8 +33,15 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
                 break;
         }
     }
+    angular.element(() => {
+        if(angular.element('header')[0].clientWidth <= 601){
+            $scope.mobile = true;
+        }else{
+            $scope.mobile = false;
+        }
+    })
 }])
-.controller('content', ['$scope', '$http', 'Upload', '$location', ($scope, $http, $upload, $location) => {
+.controller('content', ['$scope', '$http', 'Upload', '$location', '$timeout', ($scope, $http, $upload, $location, $timeout) => {
     $scope.currentPage = 'kolekcja';
     $scope.logged = {
         logged: false
@@ -59,10 +66,30 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
         rEmail: ''
     }
     $scope.loggedUser = {
-        login: false
+        login: false,
+        permissions: '1 - only likes/unlikes'
     }
     $scope.showModalPic = false;
     $scope.pages = [];
+    $scope.notification = {
+        turn: false,
+        title: 'Powiadomienie',
+        content: 'Test powiadomienia',
+        addInfo: 'none',
+        type: 'green',
+        close: () => {
+            $scope.notification.turn = false;
+        },
+        open: (title, content, addInfo = '', type = 'green') => {
+            console.log('???');
+            $scope.notification.turn = true;
+            $scope.notification.title = title;
+            $scope.notification.content = content;
+            $scope.notification.addInfo = addInfo;
+            $scope.notification.type = type;
+            return true;
+        }
+    }
     $scope.$on('changePage', (elem, arrgs) => {
         $scope.currentPage = arrgs;
     });
@@ -174,6 +201,12 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
     }
     $scope.sendFile = () => {
         let file = $scope.file;
+        if($scope.fileTitle.title == ''){
+            $scope.fileTitle.error = 'w3-border-red w3-bottombar';
+            return false;
+        }else{
+            $scope.fileTitle.error = '';
+        }
         //console.log(file)
         $upload.upload({
             url: 'php/sendFile.php',
@@ -190,13 +223,13 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
                     $scope.file = '';
                     $scope.start();
                     $scope.goPage(1);
-                    alert('Wysłano plik!');
+                    $scope.notification.open('Wysłano plik!', 'Wysłano zdjęcie! Możesz przejśc do kolekcji by zobaczyć efekt!', '', 'green');
                     break;
                 case '1':
-                    throw('Nie wybrano pliku!');
+                    $scope.notification.open('Nie wybrałeś pliku źródłowego!', 'Pownieneś wybrać plik, który będzie przesłany!', '', 'red');
                     break;
                 case '2':
-                    throw('Nie przesłano pliku!');
+                $scope.notification.open('Nie udało się przesłać pliku!', 'Prawdopodobnie spowodowane jest to słabym łączem intenrnetowym! Spróbuj ponownie później!', '', 'yellow');
                     break;
             }
         })
@@ -293,6 +326,11 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
         $scope.modalPicSrc = which.Src;
     }
     angular.element(() => {
+        if(angular.element('header')[0].clientWidth <= 601){
+            $scope.mobile = true;
+        }else{
+            $scope.mobile = false;
+        }
         $scope.start();
         $scope.goPage({
             item: 1

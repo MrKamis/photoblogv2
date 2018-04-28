@@ -13,7 +13,7 @@
     }
     require('db.php');
 
-    $db_query = $db_conn->prepare('SELECT * FROM pictures ORDER BY date DESC');
+    $db_query = $db_conn->prepare('SELECT * FROM pictures ORDER BY ID DESC');
     $db_query->execute();
     $result = $db_query->fetchAll();
 

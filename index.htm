@@ -20,19 +20,30 @@
 </head>
 <body ng-app="photoBlog" class="w3-theme-l4">
     <header ng-controller="navBar" class="w3-bar w3-row w3-theme-l1 w3-opacity w3-large w3-margin-bottom">
+        <div ng-show="mobile" class="w3-button">
+            Menu  
+        </div>
         <button class="w3-button {{kolekcja.active}}" ng-click="go('kolekcja')"><i><img src="icons/006-home.png"></i> Kolekcja</button>
         <button class="w3-button {{panel.active}}" ng-click="go('panel')"><i><img src="icons/007-cogwheel-outline.png"></i> Panel</button>
     </header>
     <div class="w3-row w3-container" ng-controller="content">
-    <div class="w3-modal" style="{{loading}}">
+        <div class="w3-modal" style="{{loading}}">
             <div class="w3-modal-content w3-padding-large">
                 <h2>Prosze czekać..</h2>
             </div>
         </div>
+        <div class="w3-bottom w3-card w3-{{notification.type}} w3-margin w3-opacity w3-padding w3-round" ng-show="notification.turn" ng-click="notification.close()">
+            <span class="w3-bar">
+                <!-- <span class="w3-button w3-{{notification.type}}" class="w3-left" ng-click="notification.close()">&times;</span> -->
+                <h3 ng-bind="notification.title" class=""></h3>
+            </span>
+            <p ng-bind="notification.content"></p>
+            <sup ng-bind="notification.addInfo"></sup>
+        </div>
         <span ng-switch="currentPage">
             <span ng-switch-when='kolekcja'>
                 <span class="w3-row w3-container">
-                    <my-photo ng-repeat="item in sPic"></my-photo>
+                    <my-photo ng-repeat="item in sPic track by $index"></my-photo>
                 </span>
 
                 <hr>
@@ -44,35 +55,48 @@
             </span>
             <span ng-switch-when="panel">
                 <div ng-hide="logged.logged" class="w3-row">
-                    <div class="w3-col">
-                        <h3>Logowanie: </h3>
-                        <label for="lLogin">Login: <input type="text" class="w3-input {{loginFormLogin}}" ng-model="user.lLogin"></label>
-                        <label for="lPassword" >Hasło: <input  type="password" class="w3-input {{loginFormPassword}}" ng-model="user.lPassword"></label>
-                        <button class="w3-button" ng-click="login()">Zaloguj</button>
+                    <div class="w3-col l2 s12 m12" style="opacity: 0;">
+                        ad
                     </div>
+                    <div class="w3-col l8 s12 m12">
+                        <div class="w3-col">
+                            <h3>Logowanie: </h3>
+                            <label for="lLogin">Login: <input type="text" class="w3-input {{loginFormLogin}}" ng-model="user.lLogin"></label>
+                            <label for="lPassword" >Hasło: <input  type="password" class="w3-input {{loginFormPassword}}" ng-model="user.lPassword"></label>
+                            <button class="w3-button" ng-click="login()">Zaloguj</button>
+                        </div>
 
-                    <br>
+                        <br>
 
-                    <div class="w3-col">
-                        <h3>Rejestracja: </h3>
-                        <label for="rLogin">Login: <input type="text" class="w3-input {{registerFormLogin}}" ng-model="user.rLogin" minlength="3"></label>
-                        <label for="rPassword">Hasło: <input type="password" class="w3-input {{registerFormRepeatPassword}}" ng-model="user.rPassword"></in></label>
-                        <label for="rRepeatPassword">Powtórz hasło: <input type="password" class="w3-input {{registerFormRepeatPassword}}" ng-model="user.rRepeatPassword"></label>
-                        <button class="w3-button" ng-click="register()">Zarejestruj</button>
+                        <div class="w3-col">
+                            <h3>Rejestracja: </h3>
+                            <label for="rLogin">Login: <input type="text" class="w3-input {{registerFormLogin}}" ng-model="user.rLogin" minlength="3"></label>
+                            <label for="rPassword">Hasło: <input type="password" class="w3-input {{registerFormRepeatPassword}}" ng-model="user.rPassword"></in></label>
+                            <label for="rRepeatPassword">Powtórz hasło: <input type="password" class="w3-input {{registerFormRepeatPassword}}" ng-model="user.rRepeatPassword"></label>
+                            <button class="w3-button" ng-click="register()">Zarejestruj</button>
+                        </div>
                     </div>
                 </div>
 
-                <div ng-show="logged.logged">
-                    <h3>Panel wstawiania zdjęć: </h3>
-                    <form name="form">
-                        Tytuł zdjęcia: <input type="text" ng-model="fileTitle.title" class="w3-input">
+                <div ng-show="logged.logged" class="w3-row">
+                    <div class="w3-col l2 m0 s0" style="opacity: 0;">
+                        ad
+                    </div>
+                    <div class="w3-col l8 m12 s12">
+                        <h3>Panel wstawiania zdjęć: </h3>
+                        <sup>Uwaga! Musisz mieć uprawnienia do wstawiania zdjęć! Twoje uprawnienia to: <span ng-bind="loggedUser.permissions"></span></sup>
+                        <form name="form">
+                            Tytuł zdjęcia: <input type="text" ng-model="fileTitle.title" class="w3-input {{fileTitle.error}}">
 
-                        <input ng-model="file" class="w3-button" ngf-select="upload($file, $invalidFiles)"  value="Wybierz zdjęcie:" type="file" ngf-accept="'image/*'" ngf-pattern="'image/*'" ngf-max-size="20MB" ngf-min-height="200">
-                        <img ngf-src="file" style="width: 50px;">
+                            <br>
 
-                    </form>
-                    <br>
-                    <button class="w3-button" ng-click="sendFile()">Wyslij</button>
+                            <input ng-model="file" class="w3-button" ngf-select="upload($file, $invalidFiles)"  value="Wybierz zdjęcie:" type="file" ngf-accept="'image/*'" ngf-pattern="'image/*'" ngf-max-size="20MB" ngf-min-height="200">
+                            <img ngf-src="file" style="width: 50px;">
+
+                        </form>
+                        <br>
+                        <button class="w3-button" ng-click="sendFile()">Wyslij</button>
+                    </div>
                 </div>
             </span>
         </span>
