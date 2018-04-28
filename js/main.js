@@ -81,7 +81,7 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
             $scope.notification.turn = false;
         },
         open: (title, content, addInfo = '', type = 'green') => {
-            console.log('???');
+            //console.log('???');
             $scope.notification.turn = true;
             $scope.notification.title = title;
             $scope.notification.content = content;
@@ -206,6 +206,7 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
             return false;
         }else{
             $scope.fileTitle.error = '';
+            $scope.notification.open('Trwa przesyłanie pliku, proszę czekać', 'Nie powinno zająć to długo czasu. Zależnie od rozmiaru zdjęcia.', 'W tym czasie możesz przeglądać kolekcje!', 'yellow');
         }
         //console.log(file)
         $upload.upload({
@@ -230,6 +231,12 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
                     break;
                 case '2':
                 $scope.notification.open('Nie udało się przesłać pliku!', 'Prawdopodobnie spowodowane jest to słabym łączem intenrnetowym! Spróbuj ponownie później!', '', 'yellow');
+                    break;
+                case '3':
+                    $scope.notification.open('Nie masz wystarczająych uprawnień do przesłania zdjęcia!', 'Musisz napisać do administratora, by przyznał Ci wystarczające uprawnienia! Email: kamis2k16@onet.pl', '', 'red');
+                    break;
+                default:
+
                     break;
             }
         })
