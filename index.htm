@@ -16,6 +16,7 @@
     <link href="src/w3css-v3/w3.css" rel="stylesheet">
     <link href="src/w3css-themes/w3-theme-blue-grey.css" rel="stylesheet">
     <script src="src/ng-file-upload/ng-file-upload-all.min.js"></script>
+    <script src="src/angular-cookies/angular-cookies.min.js"></script>
     <script src="js/main.js"></script>
 </head>
 <body ng-app="photoBlog" class="w3-theme-l4">
@@ -27,6 +28,9 @@
         <button class="w3-button {{panel.active}}" ng-click="go('panel')"><i><img src="icons/007-cogwheel-outline.png"></i> Panel</button>
     </header>
     <div class="w3-row w3-container" ng-controller="content">
+        <div ng-show="logged.logged">
+            <button class="w3-button w3-display-topright w3-theme-l1 w3-large w3-margin-bottom" ng-click="logout()">Wyloguj</button>
+        </div>
         <div class="w3-modal" style="{{loading}}">
             <div class="w3-modal-content w3-padding-large">
                 <h2>Prosze czekać..</h2>
@@ -63,7 +67,7 @@
                             <h3>Logowanie: </h3>
                             <label for="lLogin">Login: <input type="text" class="w3-input {{loginFormLogin}}" ng-model="user.lLogin"></label>
                             <label for="lPassword" >Hasło: <input  type="password" class="w3-input {{loginFormPassword}}" ng-model="user.lPassword"></label>
-                            <button class="w3-button" ng-click="login()">Zaloguj</button>
+                            <label>Zapamiętać? <input type="checkbox" ng-model="loginOptions.remember"></label> <button class="w3-button" ng-click="login()">Zaloguj</button>
                         </div>
 
                         <br>

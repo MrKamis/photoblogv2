@@ -1,4 +1,4 @@
-let app = angular.module('photoBlog', ['ngFileUpload'])
+let app = angular.module('photoBlog', ['ngFileUpload', 'ngCookies'])
 .controller('navBar', ['$scope', '$rootScope', '$location', '$window', ($scope, $rootScope, $location, $window) => {
     $scope.active = 'w3-bottombar w3-border-yellow';
     $scope.deactive = '';
@@ -41,7 +41,7 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
         }
     })
 }])
-.controller('content', ['$scope', '$http', 'Upload', '$location', '$timeout', '$window', ($scope, $http, $upload, $location, $timeout, $window) => {
+.controller('content', ['$scope', '$http', 'Upload', '$location', '$timeout', '$window', '$cookies', ($scope, $http, $upload, $location, $timeout, $window, $cookies) => {
     $scope.currentPage = 'kolekcja';
     $scope.logged = {
         logged: false
@@ -54,6 +54,9 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
     $scope.loading = '';
     $scope.fileName;
     $scope.file;
+    $scope.loginOptions = {
+        remember: false
+    }
     $scope.fileTitle = {
         title: ''
     }
@@ -94,6 +97,35 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
         $scope.currentPage = arrgs;
     });
     $scope.start = () => {
+        if($cookies.get('session')){
+            let session = $cookies.get('session');
+            //console.log(session)
+            $http({
+                method: 'POST',
+                url: 'php/checkCookies.php',
+                data: $.param({
+                    content: session
+                }),
+                headers: {
+                    'Content-type': 'application/x-www-form-urlencoded'
+                }
+            })
+            .then(response => {
+                //console.log(response.data)
+                switch(response.data){
+                    case '1':
+
+                        break;
+                    default:
+                        //console.log('ZALOGOWANO')
+
+                        $scope.loggedUser.login = response.data;
+                        $scope.logged.logged = true;
+
+                        break;
+                }
+            })
+        }
         $http({
             method: 'GET',
             url: 'php/getAll.php',
@@ -122,6 +154,28 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
         })
     };
     $scope.login = () => {
+        if($scope.loginOptions.remember){
+            $http({
+                method: 'POST',
+                url: 'php/cookies.php',
+                headers: {
+                    'Content-type': 'application/x-www-form-urlencoded'
+                },
+                data: $.param({
+                    login: $scope.user.lLogin
+                })
+            })
+            .then(response => {
+                //console.log(response.data)
+                switch(response.data){
+                    case '1':
+                        break;
+                    default:
+                        $cookies.put('session', response.data);
+                        break;
+                }
+            });
+        }
         if($scope.user.lLogin.search(/[<>]/) != -1){
             $scope.loginFormLogin = 'w3-border-red w3-bottombar';
             $scope.loginFormPassword = '';
@@ -204,6 +258,9 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
             })
         }
     }
+    $scope.upload = (file, errFile) => {
+        $scope.file = file;
+    }
     $scope.sendFile = () => {
         let file = $scope.file;
         if($scope.fileTitle.title == ''){
@@ -233,7 +290,7 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
                     $scope.notification.open('Wysłano plik!', 'Wysłano zdjęcie! Możesz przejśc do kolekcji by zobaczyć efekt!', '', 'green');
                     break;
                 case '1':
-                    console.log(response.data)
+                    //console.log(response.data)
                     $scope.notification.open('Nie wybrałeś pliku źródłowego!', 'Pownieneś wybrać plik, który będzie przesłany!', '', 'red');
                     break;
                 case '2':
@@ -341,6 +398,25 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
     $scope.openPhoto = (which) => {
         $scope.showModalPic = true;
         $scope.modalPicSrc = which.Src;
+    }
+    $scope.logout = () => {
+        let tmp = $scope.loggedUser.login;
+        $scope.logged.logged = false;
+        $scope.loggedUser.login = false;
+        $cookies.remove('session');
+        $http({
+            method: 'POST',
+            url: 'php/removeCookies.php',
+            data: $.param({
+                content: tmp
+            }),
+            headers: {
+                'Content-type': 'application/x-www-form-urlencoded'
+            }
+        })
+        .then(response => {
+
+        })
     }
     angular.element(() => {
         if(angular.element('header')[0].clientWidth <= 601){

@@ -21,3 +21,8 @@ CREATE TABLE pictures(
     likes INT,
     unlikes INT
 );
+
+CREATE TABLE sessions(
+    login VARCHAR(50) UNIQUE,
+    session_key TEXT
+);
