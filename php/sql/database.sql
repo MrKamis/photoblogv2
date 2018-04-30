@@ -8,7 +8,8 @@ CREATE TABLE users(
     permissions TEXT,
     likes TEXT,
     unlikes TEXT,
-    id INT PRIMARY KEY AUTO_INCREMENT
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    reviews TEXT
 );
 
 CREATE TABLE pictures(
@@ -18,7 +19,5 @@ CREATE TABLE pictures(
     title TEXT,
     src TEXT,
     likes INT,
-    unlikes INT,
-    likesArray TEXT,
-    unlikesArray TEXT
+    unlikes INT
 );

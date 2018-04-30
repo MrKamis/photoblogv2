@@ -3,7 +3,7 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
     $scope.active = 'w3-bottombar w3-border-yellow';
     $scope.deactive = '';
     $scope.start = (url) => {
-        $location.url('kolekcja');
+        //$location.url('kolekcja');
         $scope.kolekcja = {
             active: $scope.active
         }
@@ -41,7 +41,7 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
         }
     })
 }])
-.controller('content', ['$scope', '$http', 'Upload', '$location', '$timeout', ($scope, $http, $upload, $location, $timeout) => {
+.controller('content', ['$scope', '$http', 'Upload', '$location', '$timeout', '$window', ($scope, $http, $upload, $location, $timeout, $window) => {
     $scope.currentPage = 'kolekcja';
     $scope.logged = {
         logged: false
@@ -103,12 +103,10 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
             if(typeof(response) == 'object'){
                 //console.log(response)
                 $scope.aPic = response.data;
-                for(let x = 0; x < $scope.aPic.length; x++){
-                    $scope.sPic.push($scope.aPic[x]);
-                    if(x >= 10){
-                        break;
-                    }
-                }
+
+                $scope.goPage({
+                    item: 1
+                })
 
                 let page = 1;
                 $scope.pages.push(1);
@@ -127,10 +125,12 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
         if($scope.user.lLogin.search(/[<>]/) != -1){
             $scope.loginFormLogin = 'w3-border-red w3-bottombar';
             $scope.loginFormPassword = '';
+            $scope.notification.open('Nieprawidłowe znaki w loginie!', 'Nie można używać takich znaków jak: <, >!', '', 'red');
             return false;
         }else if($scope.user.lLogin == "" || $scope.user.lPassword == ""){
             $scope.loginFormPassword = 'w3-border-red w3-bottom';
             $scope.loginFormLogin = 'w3-border-red w3-bottombar';
+            $scope.notification.open('Zostawiłeś puste pola!', 'Musisz wypełnić wszystkie pola!', '', 'red');
             return false;
         }
         $scope.loading = 'display: block;';
@@ -155,6 +155,7 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
                     $scope.logged.logged = false;
                     $scope.loginFormPassword = 'w3-border-red w3-bottombar';
                     $scope.loginFormLogin = '';
+                    $scope.notification.open('Nieprawidłowe dane logowania!', 'Sprawdź, czy nie masz wcisniętego Caps-locka.', 'Żeby odzyskać hasło, napisz do kamis2k16@onet.pl', 'red');
                     break;
             }
             $scope.loading = '';
@@ -164,10 +165,12 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
         if($scope.user.rPassword != $scope.user.rRepeatPassword ){
             $scope.registerFormRepeatPassword = 'w3-border-red w3-bottombar';
             $scope.registerFormLogin = '';
+            $scope.notification.open('Hasła się nie zgadzają', 'Twoje hasła nie są takie same w polach haseł!', '', 'red');
             return false;
         }else if($scope.user.rLogin.search(/[<>]/) != -1){
             $scope.registerFormLogin = 'w3-border-red w3-bottombar';
             $scope.registerFormRepeatPassword = '';
+            $scope.notification.open('W loginie są niedozwolone znaki!', 'W loginie nie mogą pojawić się znaki: <, >!', '', 'red');
         }else{
             $scope.loading = 'display: block;';
             $http({
@@ -189,10 +192,12 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
                     case '1':
                         $scope.registerFormRepeatPassword = 'w3-bottombar w3-border-red';
                         $scope.registerFormLogin = '';
+                        $scope.notification.open('Hasła się nie zgadzają', 'Twoje hasła nie są takie same w polach haseł!', '', 'red');
                         break;
                     case '2':
                         $scope.registerFormLogin = 'w3-border-red w3-bottombar';
                         $scope.registerFormRepeatPassword = '';
+                        $scope.notification.open('Taki użytkownik o takim loginie już istnieje!', 'Zmień login!', '', 'red');
                         break;
                 }
                 $scope.loading = '';
@@ -203,6 +208,7 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
         let file = $scope.file;
         if($scope.fileTitle.title == ''){
             $scope.fileTitle.error = 'w3-border-red w3-bottombar';
+            $scope.notification.open('Puste pole tytułu zdjęcia', 'Nadaj tytuł zdjęciu!', '', 'yellow');
             return false;
         }else{
             $scope.fileTitle.error = '';
@@ -241,12 +247,10 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
             }
         })
     }
-    $scope.upload = (file, errFile) => {
-        $scope.file = file;
-        //console.log(file);
-    }
     $scope.like = id => {
-        if(!$scope.loggedUser.login) return false;
+        if(!$scope.loggedUser.login){
+            return($scope.notification.open('Zdjecie mogą oceniać tylko zalogowaniu uzytkownicy!', 'By sie zarejestrować, przejdź do panelu!', '', 'red'));
+        }
         //console.log(id)
         $http({
             method: 'POST',
@@ -260,7 +264,7 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
             }
         })
         .then(response => {
-            console.log(response.data)
+            //console.log(response.data)
             switch(response.data){
                 case 'complete':
                     for(let x = 0; x < $scope.sPic.length; x++){
@@ -270,14 +274,17 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
                         }
                     }
                     break;
-                case 1:
-                    
+                case '1':
+                    $scope.notification.open('Już oceniłeś to zdjęcie!', 'Oceniać można tylko raz!', '', 'yellow');
                     break;
             }
         })
     }
     $scope.unlike = id => {
-        if(!$scope.loggedUser.login) return false;
+        if(!$scope.loggedUser.login){
+
+            return($scope.notification.open('Zdjecie mogą oceniać tylko zalogowaniu uzytkownicy!', 'By sie zarejestrować, przejdź do panelu!', '', 'red'));
+        }
         //console.log(id)
         $http({
             method: 'POST',
@@ -301,20 +308,22 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
                         }
                     }
                     break;
-                case 1:
-                    
+                case '1':
+                    $scope.notification.open('Już oceniłeś to zdjęcie!', 'Oceniać można tylko raz!', '', 'yellow');
                     break;
             }
         })
     }
     $scope.goPage = (which) => {
         //console.log(which.item)
-        $location.hash('kolekcja_strona' + which.item);
+        $location.path('strona' + which.item);
 
         let item = parseInt(which.item) - 1;
 
         $scope.sPic = new Array();
         let tmp = 0;
+
+        $window.scrollTo(0,0);
 
         for(let x = 0; x < $scope.aPic.length; x++){
             if(x >= item * 10){
@@ -338,10 +347,29 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
         }else{
             $scope.mobile = false;
         }
+        //console.log($location.path())
         $scope.start();
-        $scope.goPage({
-            item: 1
-        });
+        if($location.path() != ''){
+            if($location.path().search('strona') != -1){
+                let page = $location.path().slice(7);
+                page = parseInt(page);
+                $scope.goPage({
+                    item: page
+                });
+
+                //console.log(page);
+            }else{ 
+                $location.path('strona1');
+                $scope.goPage({
+                    item: 1
+                })
+            }
+        }else{
+            $location.path('strona1');
+            $scope.goPage({
+                item: 1
+            })
+        }
     })
 }])
 .directive('myPhoto', () => {
