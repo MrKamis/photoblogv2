@@ -233,6 +233,7 @@ let app = angular.module('photoBlog', ['ngFileUpload'])
                     $scope.notification.open('Wysłano plik!', 'Wysłano zdjęcie! Możesz przejśc do kolekcji by zobaczyć efekt!', '', 'green');
                     break;
                 case '1':
+                    console.log(response.data)
                     $scope.notification.open('Nie wybrałeś pliku źródłowego!', 'Pownieneś wybrać plik, który będzie przesłany!', '', 'red');
                     break;
                 case '2':
