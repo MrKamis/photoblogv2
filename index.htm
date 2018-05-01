@@ -26,11 +26,9 @@
         </div>
         <button class="w3-button {{kolekcja.active}}" ng-click="go('kolekcja')"><i><img src="icons/006-home.png"></i> Kolekcja</button>
         <button class="w3-button {{panel.active}}" ng-click="go('panel')"><i><img src="icons/007-cogwheel-outline.png"></i> Panel</button>
+        <button class="w3-button w3-right" ng-click="logout()"><img src="icons/003-exit.png" alt="">Wyloguj</button>
     </header>
     <div class="w3-row w3-container" ng-controller="content">
-        <div ng-show="logged.logged">
-            <button class="w3-button w3-display-topright w3-theme-l1 w3-large w3-margin-bottom" ng-click="logout()">Wyloguj</button>
-        </div>
         <div class="w3-modal" style="{{loading}}">
             <div class="w3-modal-content w3-padding-large">
                 <h2>Prosze czekać..</h2>
@@ -88,7 +86,7 @@
                     </div>
                     <div class="w3-col l8 m12 s12">
                         <h3>Panel wstawiania zdjęć: </h3>
-                        <sup>Uwaga! Musisz mieć uprawnienia do wstawiania zdjęć! Twoje uprawnienia to: <span ng-bind="loggedUser.permissions"></span></sup>
+                        <sup>Uwaga! Musisz mieć uprawnienia do wstawiania zdjęć (Lvl: 5)! Twoje uprawnienia to: <span ng-bind="logged.permissions"></span></sup>
                         <form name="form">
                             Tytuł zdjęcia: <input type="text" ng-model="fileTitle.title" class="w3-input {{fileTitle.error}}">
 

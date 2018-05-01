@@ -6,8 +6,6 @@ CREATE TABLE users(
     login VARCHAR(50),
     password TEXT,
     permissions TEXT,
-    likes TEXT,
-    unlikes TEXT,
     id INT PRIMARY KEY AUTO_INCREMENT,
     reviews TEXT
 );
@@ -24,5 +22,6 @@ CREATE TABLE pictures(
 
 CREATE TABLE sessions(
     login VARCHAR(50) UNIQUE,
-    session_key TEXT
+    session_key TEXT,
+    host_ip TEXT
 );

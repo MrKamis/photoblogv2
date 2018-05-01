@@ -20,9 +20,10 @@
     $db_query->bindParam(':login', $login);
     $db_query->execute();
 
-    $db_query = $db_conn->prepare('INSERT INTO sessions(login, session_key) VALUES(:login, :session_key)');
+    $db_query = $db_conn->prepare('INSERT INTO sessions(login, session_key, host_ip) VALUES(:login, :session_key, :host_ip)');
     $db_query->bindParam(':login', $login);
     $db_query->bindParam(':session_key', $key);
+    $db_query->bindParam(':host_ip', $_SERVER['REMOTE_ADDR']);
     if($db_query->execute()){
         print($key);
     }else{

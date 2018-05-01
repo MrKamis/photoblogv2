@@ -16,7 +16,7 @@
             $db_query->bindParam(':login', $_POST['author']);
             $db_query->execute();
             $result = $db_query->fetchAll();
-            if($result[0]['permissions'] == 0){
+            if($result[0]['permissions'] < 4){
                 return(print(3));
             }
 

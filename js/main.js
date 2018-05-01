@@ -33,6 +33,9 @@ let app = angular.module('photoBlog', ['ngFileUpload', 'ngCookies'])
                 break;
         }
     }
+    $scope.logout = () => {
+        $rootScope.$broadcast('logout', '');
+    }
     angular.element(() => {
         if(angular.element('header')[0].clientWidth <= 601){
             $scope.mobile = true;
@@ -44,7 +47,8 @@ let app = angular.module('photoBlog', ['ngFileUpload', 'ngCookies'])
 .controller('content', ['$scope', '$http', 'Upload', '$location', '$timeout', '$window', '$cookies', ($scope, $http, $upload, $location, $timeout, $window, $cookies) => {
     $scope.currentPage = 'kolekcja';
     $scope.logged = {
-        logged: false
+        logged: false,
+        permissions: 5
     };
     $scope.sPic = [];
     $scope.aPic = [];
@@ -70,7 +74,7 @@ let app = angular.module('photoBlog', ['ngFileUpload', 'ngCookies'])
     }
     $scope.loggedUser = {
         login: false,
-        permissions: '1 - only likes/unlikes'
+        permissions: 1
     }
     $scope.showModalPic = false;
     $scope.pages = [];
@@ -121,6 +125,7 @@ let app = angular.module('photoBlog', ['ngFileUpload', 'ngCookies'])
 
                         $scope.loggedUser.login = response.data;
                         $scope.logged.logged = true;
+                        $scope.getInfo($scope.loggedUser.login);
 
                         break;
                 }
@@ -204,6 +209,7 @@ let app = angular.module('photoBlog', ['ngFileUpload', 'ngCookies'])
                 case 'complete':
                     $scope.loggedUser.login = $scope.user.lLogin;
                     $scope.logged.logged = true;
+                    $scope.getInfo($scope.user.lLogin);
                     break;
                 case '1':
                     $scope.logged.logged = false;
@@ -418,6 +424,60 @@ let app = angular.module('photoBlog', ['ngFileUpload', 'ngCookies'])
 
         })
     }
+    $scope.$on('logout', () => {
+        if($scope.logged.logged){
+            $scope.logout();
+        }else{
+            
+        }
+    })
+    $scope.getInfo = login => {
+        $http({
+            url: 'php/getInfo.php',
+            method: 'POST',
+            data: $.param({
+                login: login
+            }),
+            headers: {
+                'Content-type': 'application/x-www-form-urlencoded'
+            }
+        })
+        .then(response => {
+            switch(response.data){
+                case 1:
+
+                    break;
+                default:
+                    //console.log(response.data);
+                    $scope.logged.logged = true;
+                    $scope.logged.permissions = parseInt(response.data.permissions);
+                    $scope.logged.reviews = response.data.reviews;
+                    break;
+            }
+        })
+    }
+    $scope.delete = item => {
+        if($scope.logged.permissions < 4){
+            $scope.notification.open('Nie masz wystarczających uprawnień!', '', '', 'red');
+            return false;
+        }else{
+            $http({
+                url: 'php/deletePic.php',
+                method: 'POST',
+                data: $.param({
+                    id: id,
+                    login: $scope.loggedUser.login
+                }),
+                headers: {
+                    'Content-type': 'application/x-www-form-urlencoded'
+                }
+            })
+            .then(response => {
+                console.log(response.data);
+                
+            })
+        }
+    }
     angular.element(() => {
         if(angular.element('header')[0].clientWidth <= 601){
             $scope.mobile = true;
@@ -455,6 +515,7 @@ let app = angular.module('photoBlog', ['ngFileUpload', 'ngCookies'])
         '<div class="w3-row">' +
             '<div class="w3-col l2 s0 m0" style="opacity: 0;">ble</div>' +
             '<div class="w3-col l8 s12 m12 w3-card w3-padding">' +
+                '<div class="w3-bar" ng-show="logged.permissions > 4"><span class="w3-left w3-button w3-red" ng-click="edit(item.id)"><img src="icons/002-edit.png" alt=""> Edit</span><span class="w3-right w3-button w3-red" ng-click="delete(item.id)"><img src="icons/003-rubbish-bin.png" alt=""> Usuń</span></div>' +
                 '<h3><span ng-bind="item.title"></span></h3>' +
                 '<span class="w3-bar"><i class="w3-left"><img src="icons/002-avatar.png"></i><i ng-bind="item.author" class="w3-left"></i>  <i class="w3-right"><img src="icons/001-calendar.png"></i> <i class="w3-right" ng-bind="item.date"></i></span>' +
                 '<img src="{{item.src}}" alt="{{item.title}}" class="w3-button" ng-click="openPhoto(item.src)" style="width: 100%;">' +
